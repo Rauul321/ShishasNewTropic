@@ -2,16 +2,19 @@ from datetime import datetime
 from io import BytesIO
 import os
 import tempfile
+from urllib.parse import urlparse
+from urllib.request import urlopen
 
 import qrcode
 from PIL import Image as PILImage
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
+from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 
-from core.config import BARLOW_BOLD_PATH, BARLOW_REGULAR_PATH, ORIGINAL_IMAGE_PATH
+from core.config import BARLOW_BOLD_PATH, BARLOW_REGULAR_PATH, ORIGINAL_IMAGE_SOURCE
 
 
 pdfmetrics.registerFont(TTFont("Barlow", BARLOW_REGULAR_PATH))
@@ -34,6 +37,22 @@ def generate_qr_image(url):
     return buf
 
 
+def _load_background_image(source):
+    parsed = urlparse(source)
+
+    try:
+        if parsed.scheme in {"http", "https"}:
+            with urlopen(source, timeout=10) as response:
+                return PILImage.open(BytesIO(response.read()))
+
+        if os.path.exists(source):
+            return PILImage.open(source)
+    except Exception as e:
+        print(f"Error al cargar la imagen de fondo desde '{source}': {e}")
+
+    return None
+
+
 def generate_pdf(bono_id, cliente, telefono, usos_totales, usos_restantes, fecha_compra, base_url):
     scan_url = f"{base_url}/scan/{bono_id}"
     qr_buf = generate_qr_image(scan_url)
@@ -46,29 +65,23 @@ def generate_pdf(bono_id, cliente, telefono, usos_totales, usos_restantes, fecha
     c = canvas.Canvas(pdf_path, pagesize=A4, pageCompression=1)
     w, h = A4
 
-    bg_tmp_path = None
+    img_original = _load_background_image(ORIGINAL_IMAGE_SOURCE)
 
-    if os.path.exists(ORIGINAL_IMAGE_PATH):
+    if img_original is not None:
         try:
-            img_original = PILImage.open(ORIGINAL_IMAGE_PATH)
             target_size = (1240, 1754)
-            img_resized = img_original.resize(target_size, PILImage.Resampling.LANCZOS)
-
-            bg_tmp = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
-            img_resized.convert("RGB").save(bg_tmp.name, format="JPEG", quality=65, optimize=True)
-            bg_tmp.close()
-            bg_tmp_path = bg_tmp.name
-
-            c.drawImage(bg_tmp_path, 0, 0, width=w, height=h)
+            img_resized = img_original.convert("RGB").resize(target_size, PILImage.Resampling.LANCZOS)
+            c.drawImage(ImageReader(img_resized), 0, 0, width=w, height=h)
         except Exception as e:
-            print(f"Error al optimizar la imagen de fondo: {e}")
-            c.drawImage(ORIGINAL_IMAGE_PATH, 0, 0, width=w, height=h)
+            print(f"Error al procesar la imagen de fondo: {e}")
+            c.setFillColor(colors.HexColor("#080808"))
+            c.rect(0, 0, w, h, fill=1, stroke=0)
     else:
         c.setFillColor(colors.HexColor("#080808"))
         c.rect(0, 0, w, h, fill=1, stroke=0)
         c.setFillColor(colors.white)
         c.setFont("Helvetica-Bold", 14)
-        c.drawCentredString(w / 2, h / 2, f"Imagen '{ORIGINAL_IMAGE_PATH}' no encontrada.")
+        c.drawCentredString(w / 2, h / 2, f"Imagen '{ORIGINAL_IMAGE_SOURCE}' no encontrada.")
 
     qr_size = 170
     qr_x = w / 2 - qr_size / 2
@@ -105,8 +118,6 @@ def generate_pdf(bono_id, cliente, telefono, usos_totales, usos_restantes, fecha
 
     try:
         os.unlink(qr_tmp.name)
-        if bg_tmp_path and os.path.exists(bg_tmp_path):
-            os.unlink(bg_tmp_path)
     except Exception as e:
         print(f"Error al limpiar archivos temporales: {e}")
 
