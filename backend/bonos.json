@@ -1,0 +1,13 @@
+{
+  "42483487-330": {
+    "cliente": "Raul",
+    "telefono": "666666666",
+    "tipo_bono": "Bono B�sico",
+    "usos_totales": 2,
+    "usos_restantes": 1,
+    "fecha_compra": "07/06/2026 17:13",
+    "historial": [
+      "07/06/2026 17:23:54"
+    ]
+  }
+}

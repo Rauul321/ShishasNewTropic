@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEW TROPIC · Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <header>
+    <div class="logo-block">
+      <div>
+        <div class="logo-wordmark">
+          <img src="logo.png" alt="Logo" style="height:100px;vertical-align:middle;">
+        </div>
+      </div>
+    </div>
+    <div class="header-right">
+      <nav class="header-nav" style="display:flex; align-items:center; gap:24px;">
+        <span>Bonos Cachimbas</span>
+        <a href="#" id="logout-btn" style="color:var(--grey3); text-decoration:none; transition:color 0.2s; font-size:10px; border:1px solid var(--line); padding:4px 10px; border-radius:2px;">Cerrar Sesión</a>
+      </nav>
+      <div class="server-status">
+        <div class="status-dot" id="status-dot"></div>
+        <span id="status-text">Conectando</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="section-eyebrow">Nuevo Bono</div>
+
+        <div class="form-group">
+          <label for="cliente">Nombre del cliente</label>
+          <input type="text" id="cliente" placeholder="Nombre completo" autocomplete="off">
+        </div>
+
+        <div class="form-group">
+          <label for="telefono">Teléfono (opcional)</label>
+          <input type="text" id="telefono" placeholder="+34 600 000 000">
+        </div>
+
+        <div class="form-group">
+          <label for="usos">Número de usos</label>
+          <div class="presets-grid" id="presets-grid">
+            <button class="preset-btn active" type="button" data-usos="1">1 <span class="preset-label">uso</span></button>
+            <button class="preset-btn" type="button" data-usos="2">2 <span class="preset-label">usos</span></button>
+            <button class="preset-btn" type="button" data-usos="5">5 <span class="preset-label">usos</span></button>
+          </div>
+          <input type="number" id="usos" value="1" min="1" max="100" placeholder="Cantidad personalizada">
+        </div>
+
+        <button class="btn-generate" id="btn-crear" type="button">
+          <span id="btn-text">Generar Bono PDF</span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="stats-strip">
+        <div class="stat">
+          <div class="stat-label">Total Bonos</div>
+          <div class="stat-num" id="s-total">—</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Activos</div>
+          <div class="stat-num" id="s-activos">—</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Agotados</div>
+          <!DOCTYPE html>
+          <html lang="es">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>NEW TROPIC · Admin</title>
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+            <link rel="stylesheet" href="assets/css/styles.css">
+          </head>
+          <body>
+            <header>
+              <div class="logo-block">
+                <div class="logo-wordmark">
+                  <img src="logo.png" alt="Logo" style="height:100px;vertical-align:middle;">
+                </div>
+              </div>
+              <div class="header-right">
+                <nav class="header-nav" style="display:flex; align-items:center; gap:24px;">
+                  <span>Bonos Cachimbas</span>
+                  <a href="#" id="logout-btn" style="color:var(--grey3); text-decoration:none; transition:color 0.2s; font-size:10px; border:1px solid var(--line); padding:4px 10px; border-radius:2px;">Cerrar Sesión</a>
+                </nav>
+                <div class="server-status">
+                  <div class="status-dot" id="status-dot"></div>
+                  <span id="status-text">Conectando</span>
+                </div>
+              </div>
+            </header>
+
+            <div class="layout">
+              <aside class="sidebar">
+                <div class="sidebar-section">
+                  <div class="section-eyebrow">Nuevo Bono</div>
+
+                  <div class="form-group">
+                    <label for="cliente">Nombre del cliente</label>
+                    <input type="text" id="cliente" placeholder="Nombre completo" autocomplete="off">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="telefono">Teléfono (opcional)</label>
+                    <input type="text" id="telefono" placeholder="+34 600 000 000">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="usos">Número de usos</label>
+                    <div class="presets-grid" id="presets-grid">
+                      <button class="preset-btn active" type="button" data-usos="1">1 <span class="preset-label">uso</span></button>
+                      <button class="preset-btn" type="button" data-usos="2">2 <span class="preset-label">usos</span></button>
+                      <button class="preset-btn" type="button" data-usos="5">5 <span class="preset-label">usos</span></button>
+                    </div>
+                    <input type="number" id="usos" value="1" min="1" max="100" placeholder="Cantidad personalizada">
+                  </div>
+
+                  <button class="btn-generate" id="btn-crear" type="button">
+                    <span id="btn-text">Generar Bono PDF</span>
+                  </button>
+                </div>
+              </aside>
+
+              <main class="main">
+                <div class="stats-strip">
+                  <div class="stat"><div class="stat-label">Total Bonos</div><div class="stat-num" id="s-total">—</div></div>
+                  <div class="stat"><div class="stat-label">Activos</div><div class="stat-num" id="s-activos">—</div></div>
+                  <div class="stat"><div class="stat-label">Agotados</div><div class="stat-num" id="s-agotados">—</div></div>
+                  <div class="stat"><div class="stat-label">Usos Realizados</div><div class="stat-num" id="s-usos">—</div></div>
+                </div>
+
+                <div class="filter-strip">
+                  <div class="search-wrap">
+                    <span class="search-icon">⌕</span>
+                    <input type="text" id="search" placeholder="Buscar cliente, teléfono o ID...">
+                  </div>
+                  <div class="filter-tabs">
+                    <button class="ftab active" type="button" data-filter="todos">Todos</button>
+                    <button class="ftab" type="button" data-filter="activos">Activos</button>
+                    <button class="ftab" type="button" data-filter="agotados">Agotados</button>
+                  </div>
+                </div>
+
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Cliente</th>
+                        <th>Usos</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody id="table-body">
+                      <tr><td colspan="7"><div class="empty"><span class="empty-big">—</span>Cargando</div></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </main>
+            </div>
+
+            <div id="toast"></div>
+
+            <div id="login-overlay">
+              <div class="login-card">
+                <div class="logo-container">
+                  <img src="logo.png" alt="Logo New Tropic" style="max-height: 80px; vertical-align: middle;">
+                </div>
+                <h2>Acceso Administrador</h2>
+                <div class="form-group" style="text-align: left; margin-bottom: 24px;">
+                  <label for="login-password">Contraseña</label>
+                  <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+                </div>
+                <button class="btn-login" id="btn-login" type="button">Iniciar Sesión</button>
+              </div>
+            </div>
+
+            <script type="module" src="assets/js/main.js"></script>
+          </body>
+          </html>

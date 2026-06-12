@@ -1,0 +1,23 @@
+# --- Entorno y secretos ---
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+*.log
+
+# --- Artefactos generados ---
+test_bono_api.pdf
+bono_*.pdf
+*.pdf
+image_*.png
