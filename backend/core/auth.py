@@ -8,9 +8,9 @@ from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
 
 load_dotenv()
 
-SECRET_KEY = os.getenv("JWT_SECRET", "super-secret-key-change-me-39824u923")
+SECRET_KEY = os.getenv("JWT_SECRET")
 serializer = URLSafeTimedSerializer(SECRET_KEY)
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "admin123")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
 
 def generate_token(username, role="staff"):

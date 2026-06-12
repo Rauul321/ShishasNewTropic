@@ -23,7 +23,7 @@ def crear_bono():
     cliente = data.get("cliente", "").strip()
     telefono = data.get("telefono", "").strip()
     usos = int(data.get("usos", 1))
-    base_url = data.get("base_url", "http://localhost:5000")
+    base_url = data.get("base_url", "https://shishasnewtropic.onrender.com")
 
     if not cliente or usos < 1:
         return jsonify({"error": "Datos inválidos"}), 400
@@ -65,7 +65,7 @@ def reprint_pdf(bono_id):
     if not b:
         return jsonify({"error": "No encontrado"}), 404
 
-    base_url = (request.json or {}).get("base_url", "http://localhost:5000")
+    base_url = (request.json or {}).get("base_url", "https://shishasnewtropic.onrender.com")
     pdf_path = generate_pdf(
         bono_id,
         b["cliente"],
