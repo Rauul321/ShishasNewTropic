@@ -2,7 +2,7 @@ from datetime import datetime
 from io import BytesIO
 import os
 import tempfile
-from urllib.parse import urlparse
+from urllib.parse import urlencode, urlparse
 from urllib.request import urlopen
 
 import qrcode
@@ -14,6 +14,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 
+from core.auth import generate_scan_token
 from core.config import BARLOW_BOLD_PATH, BARLOW_REGULAR_PATH, ORIGINAL_IMAGE_SOURCE
 
 
@@ -54,7 +55,7 @@ def _load_background_image(source):
 
 
 def generate_pdf(bono_id, cliente, telefono, usos_totales, usos_restantes, fecha_compra, base_url):
-    scan_url = f"{base_url}/scan/{bono_id}"
+    scan_url = f"{base_url}/scan/{bono_id}?{urlencode({'token': generate_scan_token(bono_id)})}"
     qr_buf = generate_qr_image(scan_url)
     pdf_path = os.path.join(tempfile.gettempdir(), f"bono_{bono_id}.pdf")
 

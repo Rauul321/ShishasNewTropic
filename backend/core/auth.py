@@ -1,16 +1,19 @@
 import os
 from functools import wraps
+from pathlib import Path
 
 from dotenv import load_dotenv
 from flask import jsonify, request
 from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
 
 
-load_dotenv()
+BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env")
 
 SECRET_KEY = os.getenv("JWT_SECRET")
 serializer = URLSafeTimedSerializer(SECRET_KEY)
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
+SCAN_TOKEN_MAX_AGE = int(os.getenv("SCAN_TOKEN_MAX_AGE", "604800"))
 
 
 def generate_token(username, role="staff"):
@@ -22,6 +25,22 @@ def verify_token(token):
         return serializer.loads(token, max_age=604800)
     except (SignatureExpired, BadSignature):
         return None
+
+
+def generate_scan_token(bono_id):
+    return serializer.dumps({"bono_id": bono_id, "scope": "scan"})
+
+
+def verify_scan_token(token, bono_id):
+    if not token:
+        return False
+
+    try:
+        payload = serializer.loads(token, max_age=SCAN_TOKEN_MAX_AGE)
+    except (SignatureExpired, BadSignature):
+        return False
+
+    return payload.get("scope") == "scan" and payload.get("bono_id") == bono_id
 
 
 def requires_auth(_func=None, *, allowed_roles=None):
