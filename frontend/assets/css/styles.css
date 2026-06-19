@@ -60,13 +60,17 @@ header {
   color: var(--white-pure);
   line-height: 1;
 }
+.logo-wordmark img {
+  height: 100px;
+  vertical-align: middle;
+}
 .header-right {
   flex: 1; display: flex; align-items: center;
   justify-content: space-between;
   padding: 0 36px;
 }
 .header-nav {
-  display: flex; gap: 32px;
+  display: flex; align-items: center; gap: 24px;
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 1.5px;
@@ -75,6 +79,20 @@ header {
   transition: color 0.2s;
 }
 .header-nav a:hover { color: var(--white-pure); }
+#logout-btn {
+  color: var(--grey3);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-size: 10px;
+  border: 1px solid var(--line);
+  padding: 4px 10px;
+  border-radius: 2px;
+}
+#logout-btn:hover {
+  color: var(--white-pure);
+  border-color: var(--grey3);
+  background: rgba(255, 255, 255, 0.02);
+}
 .server-status {
   display: flex; align-items: center; gap: 8px;
   font-size: 10px;
@@ -370,6 +388,14 @@ td.dim { color: var(--grey3); font-size: 12px; }
   position: relative;
 }
 .login-card .logo-container { margin-bottom: 32px; }
+.login-card .logo-container img {
+  max-height: 80px;
+  vertical-align: middle;
+}
+.login-form-group {
+  text-align: left;
+  margin-bottom: 24px;
+}
 .login-card h2 {
   font-size: 16px;
   font-weight: 600;
@@ -398,10 +424,251 @@ td.dim { color: var(--grey3); font-size: 12px; }
 .login-card .btn-login:active { transform: translateY(0) scale(0.99); }
 
 @media (max-width: 900px) {
-  .layout { grid-template-columns: 1fr; }
-  .sidebar { border-right: none; border-bottom: 1px solid var(--line-strong); }
-  .stats-strip { grid-template-columns: repeat(2, 1fr); }
-  header { padding: 0 20px; }
-  .logo-block { padding: 0 20px; }
-  .header-nav { display: none; }
+  .layout {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+  .sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .stats-strip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .stat {
+    border-bottom: 1px solid var(--line);
+  }
+  .stat:nth-child(2n) {
+    border-right: none !important;
+  }
+  .stat:nth-child(3),
+  .stat:nth-child(4) {
+    border-bottom: none;
+  }
+  header {
+    padding: 0 24px;
+  }
+  .logo-block {
+    padding: 0 24px 0 0;
+  }
+  .logo-wordmark img {
+    height: 60px;
+  }
+  .header-right {
+    padding: 0 0 0 24px;
+  }
+}
+
+@media (max-width: 600px) {
+  header {
+    height: 64px;
+    padding: 0 16px;
+  }
+  .logo-block {
+    padding: 0;
+    border-right: none;
+  }
+  .logo-wordmark img {
+    height: 44px;
+  }
+  .header-right {
+    padding: 0;
+    gap: 12px;
+  }
+  .header-nav {
+    gap: 12px;
+  }
+  .header-nav span {
+    display: none;
+  }
+  .server-status #status-text {
+    display: none;
+  }
+  .server-status {
+    gap: 0;
+  }
+  
+  .sidebar-section {
+    padding: 24px 16px;
+  }
+  .section-eyebrow {
+    margin-bottom: 16px;
+  }
+  .form-group {
+    margin-bottom: 16px;
+  }
+  .presets-grid {
+    margin-bottom: 8px;
+  }
+  .preset-btn {
+    padding: 8px 4px;
+    font-size: 22px;
+  }
+  .preset-btn .preset-label {
+    font-size: 8px;
+  }
+  .btn-generate {
+    padding: 14px 16px;
+    font-size: 16px;
+  }
+
+  .stat {
+    padding: 16px 12px;
+  }
+  .stat-num {
+    font-size: 32px;
+  }
+  
+  .filter-strip {
+    flex-direction: column;
+  }
+  .search-wrap {
+    border-right: none;
+    border-bottom: 1px solid var(--line-strong);
+    width: 100%;
+  }
+  .search-wrap input {
+    padding: 14px 16px 14px 40px;
+    font-size: 13px;
+  }
+  .search-icon {
+    left: 14px;
+  }
+  .filter-tabs {
+    width: 100%;
+  }
+  .ftab {
+    flex: 1;
+    text-align: center;
+    padding: 12px 6px;
+    font-size: 9px;
+    border-right: 1px solid var(--line);
+  }
+  .ftab:last-child {
+    border-right: none;
+  }
+
+  .table-wrap {
+    padding: 16px;
+    overflow-x: hidden;
+  }
+  table, thead, tbody, th, td, tr {
+    display: block;
+    width: 100%;
+  }
+  thead {
+    display: none;
+  }
+  tbody tr {
+    background: var(--black2);
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  tbody tr:hover {
+    background: var(--black3);
+    border-color: var(--grey2);
+  }
+  td {
+    padding: 6px 0;
+    border: none;
+    display: block;
+    text-align: left;
+    width: 100%;
+  }
+  
+  td:nth-child(1) {
+    display: inline-block;
+    width: 50%;
+    vertical-align: middle;
+  }
+  td:nth-child(1)::before {
+    content: "ID: ";
+    font-size: 10px;
+    color: var(--grey3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  td:nth-child(5) {
+    display: inline-block;
+    width: 50%;
+    text-align: right;
+    vertical-align: middle;
+  }
+  
+  td:nth-child(2) {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+  }
+  
+  td:nth-child(3) {
+    padding: 8px 0;
+  }
+  td:nth-child(3) .uses-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+  }
+  td:nth-child(3) .uses-row .bar {
+    flex: 1;
+    height: 4px;
+    margin: 0;
+  }
+  
+  td:nth-child(4) {
+    padding: 8px 0 12px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 12px;
+  }
+  td:nth-child(4)::before {
+    content: "Fecha: ";
+    color: var(--grey3);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  td:nth-child(6) {
+    padding: 12px 0 0 0;
+  }
+  td:nth-child(6) .btn-action {
+    width: 100%;
+    display: block;
+    text-align: center;
+    padding: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--grey1);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+  td:nth-child(6) .btn-action:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--grey3);
+  }
+  
+  #toast {
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+    width: auto;
+    text-align: center;
+    transform: translateY(8px);
+  }
+  #toast.show {
+    transform: translateY(0);
+  }
+
+  .login-card {
+    padding: 32px 24px;
+    max-width: calc(100% - 32px);
+    margin: 16px;
+  }
 }
