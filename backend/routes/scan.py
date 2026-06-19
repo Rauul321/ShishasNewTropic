@@ -17,46 +17,46 @@ def scan_bono(bono_id):
     if supabase is None:
         return "<h1>Supabase no está configurado en el servidor.</h1>", 500
 
-        if request.method == "GET":
-                return _scan_page(bono_id)
+    if request.method == "GET":
+        return _scan_page(bono_id)
 
-        scan_token = request.args.get("token")
-        auth_header = request.headers.get("Authorization")
-        if not auth_header or not auth_header.startswith("Bearer "):
-                return jsonify({"error": "No autorizado. Debes iniciar sesión una vez en este dispositivo."}), 401
+    scan_token = request.args.get("token")
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return jsonify({"error": "No autorizado. Debes iniciar sesión una vez en este dispositivo."}), 401
 
-        user_data = verify_token(auth_header.split(" ", 1)[1])
-        if not user_data or user_data.get("role") not in {"admin", "staff"}:
-                return jsonify({"error": "No autorizado. Token inválido o expirado."}), 401
+    user_data = verify_token(auth_header.split(" ", 1)[1])
+    if not user_data or user_data.get("role") not in {"admin", "staff"}:
+        return jsonify({"error": "No autorizado. Token inválido o expirado."}), 401
 
-        if not verify_scan_token(scan_token, bono_id):
-                return jsonify({"error": "Token del QR inválido o expirado."}), 401
+    if not verify_scan_token(scan_token, bono_id):
+        return jsonify({"error": "Token del QR inválido o expirado."}), 401
 
-        bono = get_bono(bono_id)
-        if not bono:
-                return jsonify({"error": "Bono no encontrado"}), 404
+    bono = get_bono(bono_id)
+    if not bono:
+        return jsonify({"error": "Bono no encontrado"}), 404
 
-        if bono["usos_restantes"] <= 0:
-                return jsonify({"error": "Bono agotado", "cliente": bono["cliente"], "usos_totales": bono["usos_totales"]}), 409
+    if bono["usos_restantes"] <= 0:
+        return jsonify({"error": "Bono agotado", "cliente": bono["cliente"], "usos_totales": bono["usos_totales"]}), 409
 
-        nuevos_usos = bono["usos_restantes"] - 1
-        historial = bono.get("historial") or []
-        historial.append(datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+    nuevos_usos = bono["usos_restantes"] - 1
+    historial = bono.get("historial") or []
+    historial.append(datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
 
-        success = update_bono_usages(bono_id, nuevos_usos, historial)
-        if not success:
-                return jsonify({"error": "Error al canjear el bono en la base de datos."}), 500
+    success = update_bono_usages(bono_id, nuevos_usos, historial)
+    if not success:
+        return jsonify({"error": "Error al canjear el bono en la base de datos."}), 500
 
-        bono["usos_restantes"] = nuevos_usos
-        bono["historial"] = historial
+    bono["usos_restantes"] = nuevos_usos
+    bono["historial"] = historial
 
-        return jsonify({
-                "status": "ok",
-                "bono_id": bono_id,
-                "cliente": bono["cliente"],
-                "usos_totales": bono["usos_totales"],
-                "usos_restantes": bono["usos_restantes"],
-        })
+    return jsonify({
+        "status": "ok",
+        "bono_id": bono_id,
+        "cliente": bono["cliente"],
+        "usos_totales": bono["usos_totales"],
+        "usos_restantes": bono["usos_restantes"],
+    })
 
 
 def _scan_page(bono_id):
