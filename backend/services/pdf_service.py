@@ -15,7 +15,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 
 from core.auth import generate_scan_token
-from core.config import BARLOW_BOLD_PATH, BARLOW_REGULAR_PATH, ORIGINAL_IMAGE_SOURCE
+from core.config import BARLOW_BOLD_PATH, BARLOW_REGULAR_PATH, ORIGINAL_IMAGE_SOURCE, ORIGINAL_IMAGE_PATH
 
 
 pdfmetrics.registerFont(TTFont("Barlow", BARLOW_REGULAR_PATH))
@@ -38,18 +38,49 @@ def generate_qr_image(url):
     return buf
 
 
-def _load_background_image(source):
-    parsed = urlparse(source)
+_cached_background_path = None
 
+def get_cached_background_path():
+    global _cached_background_path
+    if _cached_background_path is not None and os.path.exists(_cached_background_path):
+        return _cached_background_path
+
+    cached_jpg = os.path.join(tempfile.gettempdir(), "shishas_bg_resized_v1.jpg")
+    
+    if os.path.exists(cached_jpg):
+        _cached_background_path = cached_jpg
+        return _cached_background_path
+
+    # 1. Try local filesystem
+    if ORIGINAL_IMAGE_PATH and os.path.exists(ORIGINAL_IMAGE_PATH):
+        try:
+            img = PILImage.open(ORIGINAL_IMAGE_PATH)
+            img.load()
+            target_size = (1240, 1754)
+            img_resized = img.convert("RGB").resize(target_size, PILImage.Resampling.LANCZOS)
+            img_resized.save(cached_jpg, format="JPEG", quality=95)
+            _cached_background_path = cached_jpg
+            print("[+] Imagen de fondo cargada, redimensionada y guardada como JPEG en caché.")
+            return _cached_background_path
+        except Exception as e:
+            print(f"[-] Error procesando imagen local: {e}")
+
+    # 2. Fallback to network download
     try:
+        parsed = urlparse(ORIGINAL_IMAGE_SOURCE)
         if parsed.scheme in {"http", "https"}:
-            with urlopen(source, timeout=10) as response:
-                return PILImage.open(BytesIO(response.read()))
-
-        if os.path.exists(source):
-            return PILImage.open(source)
+            print(f"[!] Descargando imagen de fondo desde {ORIGINAL_IMAGE_SOURCE}...")
+            with urlopen(ORIGINAL_IMAGE_SOURCE, timeout=10) as response:
+                img = PILImage.open(BytesIO(response.read()))
+                img.load()
+                target_size = (1240, 1754)
+                img_resized = img.convert("RGB").resize(target_size, PILImage.Resampling.LANCZOS)
+                img_resized.save(cached_jpg, format="JPEG", quality=95)
+                _cached_background_path = cached_jpg
+                print("[+] Imagen de fondo descargada, redimensionada y guardada como JPEG en caché.")
+                return _cached_background_path
     except Exception as e:
-        print(f"Error al cargar la imagen de fondo desde '{source}': {e}")
+        print(f"[-] Error al cargar la imagen de fondo remota: {e}")
 
     return None
 
@@ -66,13 +97,11 @@ def generate_pdf(bono_id, cliente, telefono, usos_totales, usos_restantes, fecha
     c = canvas.Canvas(pdf_path, pagesize=A4, pageCompression=1)
     w, h = A4
 
-    img_original = _load_background_image(ORIGINAL_IMAGE_SOURCE)
+    bg_path = get_cached_background_path()
 
-    if img_original is not None:
+    if bg_path is not None:
         try:
-            target_size = (1240, 1754)
-            img_resized = img_original.convert("RGB").resize(target_size, PILImage.Resampling.LANCZOS)
-            c.drawImage(ImageReader(img_resized), 0, 0, width=w, height=h)
+            c.drawImage(bg_path, 0, 0, width=w, height=h)
         except Exception as e:
             print(f"Error al procesar la imagen de fondo: {e}")
             c.setFillColor(colors.HexColor("#080808"))
@@ -82,7 +111,7 @@ def generate_pdf(bono_id, cliente, telefono, usos_totales, usos_restantes, fecha
         c.rect(0, 0, w, h, fill=1, stroke=0)
         c.setFillColor(colors.white)
         c.setFont("Helvetica-Bold", 14)
-        c.drawCentredString(w / 2, h / 2, f"Imagen '{ORIGINAL_IMAGE_SOURCE}' no encontrada.")
+        c.drawCentredString(w / 2, h / 2, "Imagen de fondo no cargada.")
 
     qr_size = 170
     qr_x = w / 2 - qr_size / 2
