@@ -36,6 +36,17 @@ def scan_bono(bono_id):
     if not bono:
         return jsonify({"error": "Bono no encontrado"}), 404
 
+    # Cooldown to prevent duplicate scans on F5/refresh
+    historial = bono.get("historial") or []
+    if historial:
+        try:
+            ultimo_canje = datetime.strptime(historial[-1], "%d/%m/%Y %H:%M:%S")
+            segundos_transcurridos = (datetime.now() - ultimo_canje).total_seconds()
+            if segundos_transcurridos < 10:
+                return jsonify({"error": "Canje duplicado detectado. Por favor, espera 10 segundos antes de canjear otro uso."}), 429
+        except Exception:
+            pass
+
     if bono["usos_restantes"] <= 0:
         return jsonify({"error": "Bono agotado", "cliente": bono["cliente"], "usos_totales": bono["usos_totales"]}), 409
 
@@ -215,6 +226,13 @@ def _scan_page(bono_id):
                                 'ok'
                             );
                             statusLine.textContent = 'Bono ID: {{ bono_id }}';
+
+                            // Clean the token from URL to prevent duplicate submission on F5/refresh
+                            if (window.history.replaceState) {
+                                const url = new URL(window.location);
+                                url.searchParams.delete('token');
+                                window.history.replaceState({}, '', url.pathname);
+                            }
                         }
 
                         async function loginAndRedeem() {
