@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
 
 from routes.auth import auth_bp
@@ -24,6 +24,11 @@ def create_app():
 
 
 app = create_app()
+
+@app.route('/ping', methods=['GET'])
+def ping():
+    # Devolvemos un JSON vacío (o un texto) y el código de estado 200
+    return jsonify({"status": "OK"}), 200
 
 
 if __name__ == "__main__":
